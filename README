@@ -1,3 +1,12 @@
+Notes related to this particular repo
+==========
+A fork of zlib to test with sandboxing of various types. 
+
+This repo needs the Native Client Clang compiler, so build the repo from https://github.com/shravanrn/Sandboxing_NaCl.git first
+
+Makefile is located in builds folder. Build with by running 'make' in the builds folder.
+
+==========================================
 ZLIB DATA COMPRESSION LIBRARY
 
 zlib 1.2.11 is a general purpose data compression library.  All the code is
