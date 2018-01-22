@@ -28,7 +28,27 @@ x64/nacl_build:
 	cd ./x64/nacl_build && CC=$(NACL_CLANG64) AR=$(NACL_AR64) CFLAGS='-O3 -fPIC' LDFLAGS='-fPIC' ../../../configure
 	$(MAKE) -C ./x64/nacl_build
 
-build: x32/non_nacl_build x64/non_nacl_build x32/nacl_build x64/nacl_build
+x32/non_nacl_build_debug:
+	-mkdir -p ./x32/non_nacl_build_debug
+	cd ./x32/non_nacl_build_debug && CC=clang CFLAGS='-O3 -m32 -fPIC -g' LDFLAGS='-m32 -fPIC -g' ../../../configure
+	$(MAKE) -C ./x32/non_nacl_build_debug
+
+x64/non_nacl_build_debug:
+	-mkdir -p ./x64/non_nacl_build_debug
+	cd ./x64/non_nacl_build_debug && CC=clang CFLAGS='-O3 -fPIC -g' LDFLAGS='-fPIC -g' ../../../configure
+	$(MAKE) -C ./x64/non_nacl_build_debug
+
+x32/nacl_build_debug:
+	-mkdir -p ./x32/nacl_build_debug
+	cd ./x32/nacl_build_debug && CC=$(NACL_CLANG32) AR=$(NACL_AR32) CFLAGS='-O3 -m32 -fPIC -g' LDFLAGS='-m32 -fPIC -g' ../../../configure
+	$(MAKE) -C ./x32/nacl_build_debug
+
+x64/nacl_build_debug:
+	-mkdir -p ./x64/nacl_build_debug
+	cd ./x64/nacl_build_debug && CC=$(NACL_CLANG64) AR=$(NACL_AR64) CFLAGS='-O3 -fPIC -g' LDFLAGS='-fPIC -g' ../../../configure
+	$(MAKE) -C ./x64/nacl_build_debug
+
+build: x32/non_nacl_build x64/non_nacl_build x32/nacl_build x64/nacl_build x32/non_nacl_build_debug x64/non_nacl_build_debug x32/nacl_build_debug x64/nacl_build_debug
 
 clean:
 	-rm -rf ./x32
