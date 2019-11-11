@@ -10,17 +10,17 @@ NACL_AR32=$(SANDBOXING_NACL_DIR)/native_client/toolchain/linux_x86/pnacl_newlib/
 NACL_AR64=$(SANDBOXING_NACL_DIR)/native_client/toolchain/linux_x86/pnacl_newlib/bin/x86_64-nacl-ar
 NACL_CLANG++32=$(NACL_CLANG32)++
 NACL_CLANG++64=$(NACL_CLANG64)++
-EMCC_DIR=$(shell realpath ../../emsdk)
-EMCC=emcc
-EMCC_LD=emcc
-EMAR=emar
-WASM_SANDBOX_DIR=$(shell realpath ../../wasm-sandboxing)
+# EMCC_DIR=$(shell realpath ../../emsdk)
+# EMCC=emcc
+# EMCC_LD=emcc
+# EMAR=emar
+# WASM_SANDBOX_DIR=$(shell realpath ../../wasm-sandboxing)
 
-define load_emsdk_path = 
-	source $(EMCC_DIR)/emsdk_env.sh
-endef
+# define load_emsdk_path = 
+# 	source $(EMCC_DIR)/emsdk_env.sh
+# endef
 
-include $(WASM_SANDBOX_DIR)/builds/Makefile.inc
+# include $(WASM_SANDBOX_DIR)/builds/Makefile.inc
 
 x32/non_nacl_build:
 	-mkdir -p ./x32/non_nacl_build
@@ -81,14 +81,14 @@ x64/nacl_build_debug:
 	cd ./x64/nacl_build_debug/mainCombine && $(NACL_AR64) -x ../libz.a
 	cd ./x64/nacl_build_debug/mainCombine && $(NACL_CLANG++64) -fPIC -m64 -B$(SANDBOXING_NACL_DIR)/native_client/scons-out/nacl-x86-64/lib/ -Wl,-rpath-link,$(SANDBOXING_NACL_DIR)/native_client/scons-out/nacl-x86-64/lib -Wl,-rpath-link,$(SANDBOXING_NACL_DIR)/native_client/toolchain/linux_x86/pnacl_newlib/x86_64-nacl/lib -Wl,-rpath-link,$(SANDBOXING_NACL_DIR)/native_client/scons-out/nacl-x86-64/lib ./*.o -L$(SANDBOXING_NACL_DIR)/native_client/scons-out/nacl-x86-64/lib -L$(SANDBOXING_NACL_DIR)/native_client/toolchain/linux_x86/pnacl_newlib/x86_64-nacl/lib -L$(SANDBOXING_NACL_DIR)/native_client/scons-out/nacl-x86-64/lib -ldyn_ldr_sandbox_init -o ./libz.nexe
 
-x64/wasm_build_debug:
-	-mkdir -p ./x64/wasm_build_debug
-	$(call load_emsdk_path) && \
-	cd ./x64/wasm_build_debug && CC=$(EMCC) AR=$(EMAR) CFLAGS='-O0 -fPIC -g' LDFLAGS='-fPIC -g' ../../../configure && \
-	$(MAKE) -C . && \
-	$(call convert_to_wasm,$(join $(abspath $@),/libz.a),$(join $(abspath $@),/libz_wasm.js),-std=c++11 -g)
+# x64/wasm_build_debug:
+# 	-mkdir -p ./x64/wasm_build_debug
+# 	$(call load_emsdk_path) && \
+# 	cd ./x64/wasm_build_debug && CC=$(EMCC) AR=$(EMAR) CFLAGS='-O0 -fPIC -g' LDFLAGS='-fPIC -g' ../../../configure && \
+# 	$(MAKE) -C . && \
+# 	$(call convert_to_wasm,$(join $(abspath $@),/libz.a),$(join $(abspath $@),/libz_wasm.js),-std=c++11 -g)
 
-build: x32/non_nacl_build x64/non_nacl_build x32/nacl_build x64/nacl_build x64/wasm_build x32/non_nacl_build_debug x64/non_nacl_build_debug x32/nacl_build_debug x64/nacl_build_debug x64/wasm_build_debug
+build: x32/non_nacl_build x64/non_nacl_build x32/nacl_build x64/nacl_build x64/wasm_build x32/non_nacl_build_debug x64/non_nacl_build_debug x32/nacl_build_debug x64/nacl_build_debug
 
 clean:
 	-rm -rf ./x32
