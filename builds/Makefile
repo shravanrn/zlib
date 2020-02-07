@@ -1,6 +1,6 @@
-.PHONY : build clean
+.PHONY : build clean build64 build32
 
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL := build64
 SHELL := /bin/bash
 
 SANDBOXING_NACL_DIR=$(shell realpath ../../Sandboxing_NaCl)
@@ -48,12 +48,12 @@ x64/nacl_build:
 	cd ./x64/nacl_build/mainCombine && $(NACL_AR64) -x ../libz.a
 	cd ./x64/nacl_build/mainCombine && $(NACL_CLANG++64) -fPIC -m64 -B$(SANDBOXING_NACL_DIR)/native_client/scons-out/nacl-x86-64/lib/ -Wl,-rpath-link,$(SANDBOXING_NACL_DIR)/native_client/scons-out/nacl-x86-64/lib -Wl,-rpath-link,$(SANDBOXING_NACL_DIR)/native_client/toolchain/linux_x86/pnacl_newlib/x86_64-nacl/lib -Wl,-rpath-link,$(SANDBOXING_NACL_DIR)/native_client/scons-out/nacl-x86-64/lib ./*.o -L$(SANDBOXING_NACL_DIR)/native_client/scons-out/nacl-x86-64/lib -L$(SANDBOXING_NACL_DIR)/native_client/toolchain/linux_x86/pnacl_newlib/x86_64-nacl/lib -L$(SANDBOXING_NACL_DIR)/native_client/scons-out/nacl-x86-64/lib -ldyn_ldr_sandbox_init -o ./libz.nexe
 
-x64/wasm_build:
-	-mkdir -p ./x64/wasm_build
-	$(call load_emsdk_path) && \
-	cd ./x64/wasm_build && CC=$(EMCC) AR=$(EMAR) CFLAGS='-O3 -fPIC' LDFLAGS='-fPIC' ../../../configure && \
-	$(MAKE) -C . && \
-	$(call convert_to_wasm,$(join $(abspath $@),/libz.a),$(join $(abspath $@),/libz_wasm.js),-std=c++11)
+# x64/wasm_build:
+# 	-mkdir -p ./x64/wasm_build
+# 	$(call load_emsdk_path) && \
+# 	cd ./x64/wasm_build && CC=$(EMCC) AR=$(EMAR) CFLAGS='-O3 -fPIC' LDFLAGS='-fPIC' ../../../configure && \
+# 	$(MAKE) -C . && \
+# 	$(call convert_to_wasm,$(join $(abspath $@),/libz.a),$(join $(abspath $@),/libz_wasm.js),-std=c++11)
 
 x32/non_nacl_build_debug:
 	-mkdir -p ./x32/non_nacl_build_debug
@@ -88,7 +88,9 @@ x64/nacl_build_debug:
 # 	$(MAKE) -C . && \
 # 	$(call convert_to_wasm,$(join $(abspath $@),/libz.a),$(join $(abspath $@),/libz_wasm.js),-std=c++11 -g)
 
-build: x32/non_nacl_build x64/non_nacl_build x32/nacl_build x64/nacl_build x64/wasm_build x32/non_nacl_build_debug x64/non_nacl_build_debug x32/nacl_build_debug x64/nacl_build_debug
+build32: x32/non_nacl_build x32/nacl_build x32/non_nacl_build_debug x32/nacl_build_debug
+build64: x64/non_nacl_build x64/nacl_build x64/non_nacl_build_debug x64/nacl_build_debug
+build: build32 build64
 
 clean:
 	-rm -rf ./x32
